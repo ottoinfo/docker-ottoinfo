@@ -1,0 +1,26 @@
+version: '2'
+
+services:
+  nginx:
+    networks:
+     - ottoinfo-nginx-net
+     - ottoinfo-lb-net
+    build:
+      context: $NGINX_CODEBASE_DIR
+      dockerfile: ${PWD}/Dockerfile
+    image: ottoinfo/nginx
+    container_name: ottoinfo_nginx_instance
+    volumes:
+      - $NGINX_CODEBASE_DIR:/data/nginx/current
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    expose:
+      - "80"
+      - "443"
+    tty: true
+    stdin_open: true
+
+networks:
+  ottoinfo-nginx-net:
+    driver: bridge
+  ottoinfo-lb-net:
+    external: true

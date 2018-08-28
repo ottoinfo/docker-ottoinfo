@@ -1,0 +1,32 @@
+version: '2'
+
+services:
+  node:
+    networks:
+      - ottoinfo-node-net
+      - ottoinfo-lb-net
+    build:
+      context: $NODE_CODEBASE_DIR
+      dockerfile: ${PWD}/Dockerfile
+    image: ottoinfo/node
+    tty: true
+    stdin_open: true
+    environment:
+      - APP_ENV=local
+      - COOKIE_SESSION_KEY=ottoinfo
+      - NODE_ENV=development
+      - SITE_URL=http://www.local.saatchiart.com
+    container_name: ottoinfo_node_instance
+    volumes:
+      - $NODE_CODEBASE_DIR:/data/node/current
+    external_links:
+      - lb:local.ottoinfo.com
+    command: ["yarn", "dev"] #webpack dev server
+    #command: ["yarn", "local-deploy"] #test nextjs build locally
+    ports: ["3000"]
+
+networks:
+  ottoinfo-node-net:
+    driver: bridge
+  ottoinfo-lb-net:
+    external: true
